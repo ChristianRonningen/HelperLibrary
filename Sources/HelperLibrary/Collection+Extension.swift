@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Collection {
+public extension Collection {
     func containsMore(than: Int) -> Bool {
         return count > than
     }
@@ -29,7 +29,7 @@ extension Collection {
     }
 }
 
-extension Array {
+public extension Array {
     func object(at index: Int) -> Element? {
         guard endIndex > index && index >= 0 else { return nil }
         return self[index]
