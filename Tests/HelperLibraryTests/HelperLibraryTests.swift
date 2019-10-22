@@ -3,10 +3,11 @@ import XCTest
 
 final class HelperLibraryTests: XCTestCase {
     func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(HelperLibrary().text, "Hello, World!")
+
+        let testArray = ["1", "2", "3"]
+        XCTAssertTrue(testArray.containsMore(than: 2))
+        XCTAssertFalse(testArray.containsFewer(than: 2))
+        
     }
 
     static var allTests = [

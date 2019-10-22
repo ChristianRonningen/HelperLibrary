@@ -8,23 +8,30 @@
 import Foundation
 
 extension Collection {
-    func isMore(then: Int) -> Bool {
-        return count > then
+    func containsMore(than: Int) -> Bool {
+        return count > than
     }
     
-    func isMoreOrEqual(to: Int) -> Bool {
+    func containsMoreOrEqual(to: Int) -> Bool {
         return count >= to
     }
     
-    func isFewer(then: Int) -> Bool {
-        return count < then
+    func containsFewer(than: Int) -> Bool {
+        return count < than
     }
     
-    func isFewerOrEqual(to: Int) -> Bool {
+    func containsFewerOrEqual(to: Int) -> Bool {
         return count <= to
     }
     
-    func equals(total: Int) -> Bool {
+    func containsEqual(total: Int) -> Bool {
         return count == total
+    }
+}
+
+extension Array {
+    func object(at index: Int) -> Element? {
+        guard endIndex > index && index >= 0 else { return nil }
+        return self[index]
     }
 }
