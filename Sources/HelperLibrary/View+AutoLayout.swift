@@ -10,19 +10,19 @@ import Foundation
 #if canImport(UIKit)
 import UIKit
 typealias View = UIView
-typealias EdgeInsets = UIEdgeInsets
+public typealias EdgeInsets = UIEdgeInsets
 #elseif canImport(AppKit)
 import AppKit
 typealias View = NSView
-typealias EdgeInsets = NSEdgeInsets
+public typealias EdgeInsets = NSEdgeInsets
 
-extension NSEdgeInsets {
+public extension NSEdgeInsets {
     static let zero = NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 }
 #endif
 
 // MARK: Fill superview
-extension View {
+public extension View {
     /// Matches width and height to superview and centers it
     /// - Parameter activated: Should the constaint be activated directly
     func fillSuperview(activated: Bool = true) -> [NSLayoutConstraint] {
@@ -96,7 +96,7 @@ extension View {
 }
 
 // MARK: Constrain to superview
-extension View {
+public extension View {
     func constraintToSuperView(activated: Bool = true, with inset: EdgeInsets = .zero) -> [NSLayoutConstraint]? {
         return [
             constraintToSuperViewLeft(activated, inset: inset.left),
@@ -166,7 +166,9 @@ extension View {
 
 
 // MARK: Constraint to margins
-extension View {
+#if canImport(UIKit)
+@available(iOS 11.0, *)
+public extension View {
     func constraintToSuperViewMargins(activated: Bool = true, with inset: EdgeInsets = .zero) -> [NSLayoutConstraint]? {
         return [
             constraintToSuperViewLeftMargin(activated, inset: inset.left),
@@ -181,7 +183,7 @@ extension View {
 
         let constraint: NSLayoutConstraint
         
-        if #available(iOS 9.0, OSX 10.11, *) {
+        if #available(iOS 9.0, *) {
             constraint = leftAnchor.constraint(equalTo: superview.layoutMarginsGuide.leftAnchor, constant: inset)
         } else {
             constraint = NSLayoutConstraint(item: self, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1, constant: inset)
@@ -195,7 +197,7 @@ extension View {
         guard let superview = self.superview else { return nil }
         
         let constraint: NSLayoutConstraint
-        if #available(iOS 9.0, OSX 10.11, *) {
+        if #available(iOS 9.0, *) {
             constraint = rightAnchor.constraint(equalTo: superview.layoutMarginsGuide.rightAnchor, constant: -inset)
         } else {
             constraint = NSLayoutConstraint(item: self, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1, constant: -inset)
@@ -209,7 +211,7 @@ extension View {
         guard let superview = self.superview else { return nil }
         
         let constraint: NSLayoutConstraint
-        if #available(iOS 9.0, OSX 10.11, *) {
+        if #available(iOS 9.0, *) {
             constraint = bottomAnchor.constraint(equalTo: superview.layoutMarginsGuide.bottomAnchor, constant: -inset)
         } else {
             constraint = NSLayoutConstraint(item: self, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1, constant: -inset)
@@ -223,7 +225,7 @@ extension View {
         guard let superview = self.superview else { return nil }
         
         let constraint: NSLayoutConstraint
-        if #available(iOS 9.0, OSX 10.11, *) {
+        if #available(iOS 9.0, *) {
             constraint = topAnchor.constraint(equalTo: superview.layoutMarginsGuide.topAnchor, constant: inset)
         } else {
             constraint = NSLayoutConstraint(item: self, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1, constant: inset)
@@ -233,11 +235,12 @@ extension View {
         return constraint
     }
 }
+#endif
 
 // MARK: Constrain to safearea
 #if canImport(UIKit)
 @available(iOS 11.0, *)
-extension View {
+public extension View {
     func constraintToSuperViewSafeArea(activated: Bool = true, with inset: EdgeInsets = .zero) -> [NSLayoutConstraint]? {
         return [
             constraintToSuperViewSafeAreaLeft(activated, inset: inset.left),
@@ -286,7 +289,7 @@ extension View {
 #endif
 
 
-extension NSLayoutConstraint {
+public extension NSLayoutConstraint {
     func activate() -> Self {
         isActive = true
         return self
