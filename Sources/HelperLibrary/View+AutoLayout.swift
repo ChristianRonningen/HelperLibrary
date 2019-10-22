@@ -3,22 +3,16 @@
 //  
 //
 //  Created by Christian Rönningen on 2019-10-21.
+//  Copyright © 2019 Christian Rönningen. All rights reserved.
 //
+
 
 import Foundation
 
 #if canImport(UIKit)
 import UIKit
-public typealias View = UIView
-public typealias EdgeInsets = UIEdgeInsets
 #elseif canImport(AppKit)
 import AppKit
-public typealias View = NSView
-public typealias EdgeInsets = NSEdgeInsets
-
-public extension NSEdgeInsets {
-    static let zero = NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-}
 #endif
 
 // MARK: Fill superview

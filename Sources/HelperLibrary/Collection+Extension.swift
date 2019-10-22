@@ -3,6 +3,7 @@
 //  
 //
 //  Created by Christian Rönningen on 2019-10-21.
+//  Copyright © 2019 Christian Rönningen. All rights reserved.
 //
 
 import Foundation
