@@ -9,11 +9,11 @@ import Foundation
 
 #if canImport(UIKit)
 import UIKit
-typealias View = UIView
+public typealias View = UIView
 public typealias EdgeInsets = UIEdgeInsets
 #elseif canImport(AppKit)
 import AppKit
-typealias View = NSView
+public typealias View = NSView
 public typealias EdgeInsets = NSEdgeInsets
 
 public extension NSEdgeInsets {
@@ -25,7 +25,10 @@ public extension NSEdgeInsets {
 public extension View {
     /// Matches width and height to superview and centers it
     /// - Parameter activated: Should the constaint be activated directly
+    @discardableResult
     func fillSuperview(activated: Bool = true) -> [NSLayoutConstraint] {
+        translatesAutoresizingMaskIntoConstraints = false
+        
         return [
             matchWidthToSuperview(activated),
             matchHeightToSuperview(activated),
@@ -34,8 +37,11 @@ public extension View {
         ].compactMap({ $0 })
     }
     
+    @discardableResult
     func matchWidthToSuperview(_ activated: Bool = true) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
         
         let constraint: NSLayoutConstraint
         
@@ -49,8 +55,11 @@ public extension View {
         return constraint
     }
     
+    @discardableResult
     func matchHeightToSuperview(_ activated: Bool = true) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
         
         let constraint: NSLayoutConstraint
         
@@ -64,8 +73,11 @@ public extension View {
         return constraint
     }
     
+    @discardableResult
     func centerXInSuperview(_ activated: Bool = true) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
         
         let constraint: NSLayoutConstraint
         
@@ -79,8 +91,11 @@ public extension View {
         return constraint
     }
     
+    @discardableResult
     func centerYInSuperview(_ activated: Bool = true) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
         
         let constraint: NSLayoutConstraint
         
@@ -97,7 +112,10 @@ public extension View {
 
 // MARK: Constrain to superview
 public extension View {
+    @discardableResult
     func constraintToSuperView(activated: Bool = true, with inset: EdgeInsets = .zero) -> [NSLayoutConstraint]? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
         return [
             constraintToSuperViewLeft(activated, inset: inset.left),
             constraintToSuperViewTop(activated, inset: inset.top),
@@ -106,8 +124,11 @@ public extension View {
         ].compactMap({ $0 })
     }
 
+    @discardableResult
     func constraintToSuperViewLeft(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
 
         let constraint: NSLayoutConstraint
         
@@ -121,8 +142,11 @@ public extension View {
         return constraint
     }
     
+    @discardableResult
     func constraintToSuperViewRight(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
         
         let constraint: NSLayoutConstraint
         if #available(iOS 9.0, OSX 10.11, *) {
@@ -135,8 +159,11 @@ public extension View {
         return constraint
     }
     
+    @discardableResult
     func constraintToSuperViewBottom(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
         
         let constraint: NSLayoutConstraint
         if #available(iOS 9.0, OSX 10.11, *) {
@@ -149,14 +176,91 @@ public extension View {
         return constraint
     }
     
+    @discardableResult
     func constraintToSuperViewTop(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
         
         let constraint: NSLayoutConstraint
         if #available(iOS 9.0, OSX 10.11, *) {
             constraint = topAnchor.constraint(equalTo: superview.topAnchor, constant: inset)
         } else {
             constraint = NSLayoutConstraint(item: self, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1, constant: inset)
+        }
+    
+        constraint.isActive = activated
+        return constraint
+    }
+    
+    //
+    @discardableResult
+    func constraint(to view: View, activated: Bool = true, with inset: EdgeInsets = .zero) -> [NSLayoutConstraint]? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        return [
+            constraintLeft(of: view, activated: activated, inset: inset.left),
+            constraintTop(of: view, activated: activated, inset: inset.top),
+            constraintRight(of: view, activated: activated, inset: inset.right),
+            constraintBottom(of: view, activated: activated, inset: inset.bottom)
+        ].compactMap({ $0 })
+    }
+
+    @discardableResult
+    func constraintLeft(of view: View, activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
+        translatesAutoresizingMaskIntoConstraints = false
+
+        let constraint: NSLayoutConstraint
+        
+        if #available(iOS 9.0, OSX 10.11, *) {
+            constraint = leftAnchor.constraint(equalTo: view.leftAnchor, constant: inset)
+        } else {
+            constraint = NSLayoutConstraint(item: self, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: inset)
+        }
+    
+        constraint.isActive = activated
+        return constraint
+    }
+    
+    @discardableResult
+    func constraintRight(of view: View, activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraint: NSLayoutConstraint
+        if #available(iOS 9.0, OSX 10.11, *) {
+            constraint = rightAnchor.constraint(equalTo: view.rightAnchor, constant: -inset)
+        } else {
+            constraint = NSLayoutConstraint(item: self, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1, constant: -inset)
+        }
+    
+        constraint.isActive = activated
+        return constraint
+    }
+    
+    @discardableResult
+    func constraintBottom(of view: View, activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraint: NSLayoutConstraint
+        if #available(iOS 9.0, OSX 10.11, *) {
+            constraint = bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -inset)
+        } else {
+            constraint = NSLayoutConstraint(item: self, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -inset)
+        }
+    
+        constraint.isActive = activated
+        return constraint
+    }
+    
+    @discardableResult
+    func constraintTop(of view: View, activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraint: NSLayoutConstraint
+        if #available(iOS 9.0, OSX 10.11, *) {
+            constraint = topAnchor.constraint(equalTo: view.topAnchor, constant: inset)
+        } else {
+            constraint = NSLayoutConstraint(item: self, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: inset)
         }
     
         constraint.isActive = activated
@@ -169,7 +273,10 @@ public extension View {
 #if canImport(UIKit)
 @available(iOS 11.0, *)
 public extension View {
+    @discardableResult
     func constraintToSuperViewMargins(activated: Bool = true, with inset: EdgeInsets = .zero) -> [NSLayoutConstraint]? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
         return [
             constraintToSuperViewLeftMargin(activated, inset: inset.left),
             constraintToSuperViewTopMargin(activated, inset: inset.top),
@@ -177,60 +284,104 @@ public extension View {
             constraintToSuperViewBottomMargin(activated, inset: inset.bottom)
         ].compactMap({ $0 })
     }
+    
+    @discardableResult
+    func constraintMargins(of view: View, activated: Bool = true, with inset: EdgeInsets = .zero) -> [NSLayoutConstraint]? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        return [
+            constraintLeftMargin(of: view, activated: activated, inset: inset.left),
+            constraintTopMargin(of: view, activated: activated, inset: inset.top),
+            constraintRightMargin(of: view, activated: activated, inset: inset.right),
+            constraintBottomMargin(of: view, activated: activated, inset: inset.bottom)
+        ].compactMap({ $0 })
+    }
+    
+    @discardableResult
+    func constraintLeftMargin(of view: View, activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
+     
+        translatesAutoresizingMaskIntoConstraints = false
 
+        let constraint = leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: inset)
+        
+        constraint.isActive = activated
+        return constraint
+    }
+
+    @discardableResult
     func constraintToSuperViewLeftMargin(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
-
-        let constraint: NSLayoutConstraint
         
-        if #available(iOS 9.0, *) {
-            constraint = leftAnchor.constraint(equalTo: superview.layoutMarginsGuide.leftAnchor, constant: inset)
-        } else {
-            constraint = NSLayoutConstraint(item: self, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1, constant: inset)
-        }
-    
+        translatesAutoresizingMaskIntoConstraints = false
+
+        let constraint = leftAnchor.constraint(equalTo: superview.layoutMarginsGuide.leftAnchor, constant: inset)
+        
         constraint.isActive = activated
         return constraint
     }
     
+    @discardableResult
+    func constraintRightMargin(of view: View, activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraint = rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor, constant: -inset)
+        
+        constraint.isActive = activated
+        return constraint
+    }
+    
+    @discardableResult
     func constraintToSuperViewRightMargin(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
         
-        let constraint: NSLayoutConstraint
-        if #available(iOS 9.0, *) {
-            constraint = rightAnchor.constraint(equalTo: superview.layoutMarginsGuide.rightAnchor, constant: -inset)
-        } else {
-            constraint = NSLayoutConstraint(item: self, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1, constant: -inset)
-        }
-    
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraint = rightAnchor.constraint(equalTo: superview.layoutMarginsGuide.rightAnchor, constant: -inset)
+        
         constraint.isActive = activated
         return constraint
     }
     
+    @discardableResult
+    func constraintBottomMargin(of view: View, activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraint = bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -inset)
+        
+        constraint.isActive = activated
+        return constraint
+    }
+    
+    @discardableResult
     func constraintToSuperViewBottomMargin(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
         
-        let constraint: NSLayoutConstraint
-        if #available(iOS 9.0, *) {
-            constraint = bottomAnchor.constraint(equalTo: superview.layoutMarginsGuide.bottomAnchor, constant: -inset)
-        } else {
-            constraint = NSLayoutConstraint(item: self, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1, constant: -inset)
-        }
-    
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraint = bottomAnchor.constraint(equalTo: superview.layoutMarginsGuide.bottomAnchor, constant: -inset)
+        
         constraint.isActive = activated
         return constraint
     }
     
+    @discardableResult
+    func constraintTopMargin(of view: View, activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraint = topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: inset)
+        
+        constraint.isActive = activated
+        return constraint
+    }
+    
+    @discardableResult
     func constraintToSuperViewTopMargin(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
         
-        let constraint: NSLayoutConstraint
-        if #available(iOS 9.0, *) {
-            constraint = topAnchor.constraint(equalTo: superview.layoutMarginsGuide.topAnchor, constant: inset)
-        } else {
-            constraint = NSLayoutConstraint(item: self, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1, constant: inset)
-        }
-    
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraint = topAnchor.constraint(equalTo: superview.layoutMarginsGuide.topAnchor, constant: inset)
+        
         constraint.isActive = activated
         return constraint
     }
@@ -241,7 +392,10 @@ public extension View {
 #if canImport(UIKit)
 @available(iOS 11.0, *)
 public extension View {
+    @discardableResult
     func constraintToSuperViewSafeArea(activated: Bool = true, with inset: EdgeInsets = .zero) -> [NSLayoutConstraint]? {
+        translatesAutoresizingMaskIntoConstraints = false
+        
         return [
             constraintToSuperViewSafeAreaLeft(activated, inset: inset.left),
             constraintToSuperViewSafeAreaTop(activated, inset: inset.top),
@@ -250,8 +404,11 @@ public extension View {
         ].compactMap({ $0 })
     }
 
+    @discardableResult
     func constraintToSuperViewSafeAreaLeft(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
 
         let constraint = leftAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.leftAnchor, constant: inset)
         
@@ -259,8 +416,11 @@ public extension View {
         return constraint
     }
     
+    @discardableResult
     func constraintToSuperViewSafeAreaTop(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
 
         let constraint = topAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.topAnchor, constant: inset)
         
@@ -268,8 +428,11 @@ public extension View {
         return constraint
     }
     
+    @discardableResult
     func constraintToSuperViewSafeAreaRight(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
 
         let constraint = rightAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.rightAnchor, constant: inset)
         
@@ -277,8 +440,11 @@ public extension View {
         return constraint
     }
     
+    @discardableResult
     func constraintToSuperViewSafeAreaBottom(_ activated: Bool = true, inset: CGFloat = 0.0) -> NSLayoutConstraint? {
         guard let superview = self.superview else { return nil }
+        
+        translatesAutoresizingMaskIntoConstraints = false
 
         let constraint = bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor, constant: inset)
         
